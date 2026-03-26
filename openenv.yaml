@@ -1,0 +1,65 @@
+name: hospital-triage-env
+version: "1.0.0"
+description: >
+  Hospital Emergency Room Triage environment where an AI agent
+  allocates patients to doctors based on severity, specialty match,
+  and resource constraints.
+
+observation_space:
+  type: structured
+  schema: HospitalState
+  fields:
+    - timestep: int
+    - patients_waiting: List[Patient]
+    - patients_being_treated: List[Patient]
+    - doctors: List[Doctor]
+    - discharged_count: int
+    - critical_count: int
+    - total_wait_time: float
+    - episode_over: bool
+
+action_space:
+  type: structured
+  schema: TriageAction
+  fields:
+    - action_type: "assign" | "wait" | "discharge"
+    - patient_id: Optional[str]
+    - doctor_id: Optional[str]
+
+reward:
+  type: continuous
+  range: [-1.0, 1.0]
+  description: >
+    Partial reward based on: severity prioritization (30%),
+    specialty match (20%), patient throughput (20%),
+    wait time management (15%), critical avoidance (15%).
+
+tasks:
+  - id: easy_triage
+    file: tasks/easy.py
+    class: EasyTask
+    difficulty: easy
+    expected_score_range: [0.55, 0.75]
+
+  - id: medium_triage
+    file: tasks/medium.py
+    class: MediumTask
+    difficulty: medium
+    expected_score_range: [0.45, 0.65]
+
+  - id: hard_triage
+    file: tasks/hard.py
+    class: HardTask
+    difficulty: hard
+    expected_score_range: [0.35, 0.55]
+
+evaluation:
+  seeds: [42, 123, 7, 999, 2024]
+  script: agents/run_eval.py
+  grader: tasks/grader.py
+
+api:
+  methods:
+    - reset(seed: int) -> HospitalState
+    - step(action: TriageAction) -> StepResult
+    - state() -> HospitalState
