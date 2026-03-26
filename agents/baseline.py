@@ -64,7 +64,7 @@ Provide your next action in strict JSON format.
         try:
             # 3. Call the API
             response = self.client.chat.completions.create(
-                model="llama-3.1-8b-instant", # Groq compatible model
+                model="gpt-4o-mini", # Standard OpenAI model for final HF judging
                 messages=[
                     {"role": "system", "content": self.system_prompt},
                     {"role": "user", "content": user_prompt}
