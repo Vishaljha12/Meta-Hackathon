@@ -64,7 +64,7 @@ Provide your next action in strict JSON format.
         try:
             # 3. Call the API
             response = self.client.chat.completions.create(
-                model="gpt-4o-mini", # Fast, cheap, and smart enough for this
+                model="llama-3.1-8b-instant", # Groq compatible model
                 messages=[
                     {"role": "system", "content": self.system_prompt},
                     {"role": "user", "content": user_prompt}
